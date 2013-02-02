@@ -1,0 +1,39 @@
+name:              lanchon
+version:           0.1
+license:           BSD3
+license-file:      LICENSE
+author:            Ernesto Rodríguez <neto@netogallo.me>
+maintainer:        Ernesto Rodríguez <neto@netogallo.me>
+synopsis:          An efficient, extensible and minimalist launcher.
+description:       Lanchon is a desktop agnostic launcher that intends to be minimalist and extensible. 
+category:          Desktop
+stability:         Experimental
+cabal-version:     >= 1.8
+build-type:        Simple
+
+library
+    exposed-modules: Lanchon.UI.Launcher
+                     Lanchon.Core.Base
+                     Lanchon.Plugins.ListExecutables
+
+    ghc-options:   -Wall -threaded -O2
+
+    extensions: OverloadedStrings
+                
+    build-depends: base                          >= 4          && < 5
+                 , wx                            >= 0.13
+                 , wxcore                        >= 0.13
+                 , regex-tdfa	                 >= 1.1.8
+                 , bytestring                    >= 0.9
+                 , stm                           >= 2.4
+                 , reactive-banana               >= 0.7.0
+                 , reactive-banana-wx            >= 0.7.0
+                 , unix                          >= 2.5
+                 , directory                     >= 1.2
+
+executable         lanchon
+    main-is:           main.hs
+    hs-source-dirs:    dist
+    build-depends:     base
+                     , lanchon
+
