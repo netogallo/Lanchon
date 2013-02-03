@@ -54,7 +54,7 @@ buildRunner plugins = do
       case tId of
         Just tId' -> killThread tId' >> killThreads chan
         Nothing -> return ()
-    runPlugins pidChan chan text = killThreads pidChan >> putStrLn "running search" >> mapM_ (runPlugin chan pidChan text) plugins
+    runPlugins pidChan chan text = killThreads pidChan >> mapM_ (runPlugin chan pidChan text) plugins
     runPlugin chan pidChan text plugin = if text =~ regexp plugin then
                               do
                                 tid <- forkIO $ do
@@ -64,10 +64,3 @@ buildRunner plugins = do
                                 return $ Just tid
                             else
                               return Nothing
-  
-samplePlugin :: Int -> ByteString -> IO [(ByteString,IO ())]
-samplePlugin time _ = do
-  threadDelay $ time * 100000
-  return [(pack $ show time,return ())]
-  
-samplePlugins = [Plugin ".*" (samplePlugin x) | x <- [1 .. 10]]

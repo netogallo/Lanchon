@@ -21,11 +21,11 @@ import Control.Monad
 import Graphics.UI.WX hiding (Event)
 import Graphics.UI.WXCore
 import Lanchon.Core.Base
-import Control.Concurrent (forkIO)
 import Data.ByteString.Char8 (pack,unpack)
 import Data.ByteString (ByteString)
 import Reactive.Banana
 import Reactive.Banana.WX
+import Control.Concurrent (yield)
 
 -- Plugins
 import Lanchon.Plugins.ListExecutables (pathPlugin)
@@ -38,8 +38,6 @@ buildGui plugins = do
   let
     g = grid 1 1 [[widget cmdField,widget resultList]]
   runner <- buildRunner plugins
-  --windowOnKeyChar f $ \_ -> pluginRunner cmdField resultList runner
-  --controlOnText cmdField $ pluginRunner cmdField resultList runner
   set f [layout := g]
   inputL <- compile $ inputListener cmdField resultList runner
   actuate inputL
@@ -51,7 +49,6 @@ inputListener cmdField resultList runner = do
   let notifyChange text = do
         listCtrlDeleteAllItems resultList
         (inputUpdater runner) (pack text)
-        putStrLn "Field changed"        
         return ()
   reactimate $ notifyChange <$> cmdInput
   
@@ -61,7 +58,6 @@ resultListener resultList t runner = do
   etick <- event0 t command
   let
     addItem (text,_) = do
-      putStrLn "Adding Item"
       i <- listItemCreate
       listItemSetText i $ unpack text
       listCtrlInsertItem resultList i

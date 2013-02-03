@@ -46,12 +46,11 @@ getPathContents path = do
              
 pathPlugin = do
   folders <- getEnv pathEnv >>= \(Just f) -> return $ split ':' f
+  elements <- getPathContents folders >>= return . (map pack)
   let
     filterPath arg = do
-      putStrLn "Begin search"
-      elements <- getPathContents folders >>= return . (map pack) . (take 10)
       let
-        matches = filter (\x -> x =~ (BS.concat [arg,".*"])) elements
+        matches = take 20 $ filter (\x -> x =~ (BS.concat [arg,".*"])) elements
         results = map (\m -> (m,return ())) matches
       return results
   return $ Plugin ".*" filterPath
